@@ -98,7 +98,7 @@ MyChat::ChatView* cv = new MyChat::ChatView();
 void test() {
 	while (true) {
 		this_thread::sleep_for(chrono::milliseconds(5000));
-		cv->setFlag(1);
+		cv->setRecvFlag(1);
 	}
 }
 
@@ -107,10 +107,9 @@ int main() {
 
 	cout << "사용할 이름을 입력해주세요 : ";
 	cin >> loginedUser;
-	system("cls");
-	cv->printChatWindow();
+	cv->paintChatDisplay();
 	thread t1(test);
-	cv->printSendMsg();
+	cv->run();
 	t1.join();
 
 	//skt = new Socket(9999, "127.0.0.1");

@@ -143,6 +143,10 @@
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="MyChat.h" />
+    <ClCompile Include="MyChatView.cpp">
+      <FileType>CppHeader</FileType>
+    </ClCompile>
     <ClInclude Include="MySocket.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

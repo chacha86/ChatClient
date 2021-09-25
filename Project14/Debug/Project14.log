@@ -1,4 +1,4 @@
-﻿  Source.cpp
-C:\Users\taeji\source\repos\Project14\Project14\Source.cpp(13,2): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-C:\Users\taeji\source\repos\Project14\Project14\Source.cpp(14,2): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+﻿  MyChatView.cpp
+C:\Users\taeji\source\repos\Project14\Project14\MyChatView.cpp(110,7): warning C4996: 'kbhit': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _kbhit. See online help for details.
+C:\Users\taeji\source\repos\Project14\Project14\MyChatView.cpp(111,15): warning C4996: 'getch': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _getch. See online help for details.
   Project14.vcxproj -> C:\Users\taeji\source\repos\Project14\Debug\Project14.exe

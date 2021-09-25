@@ -1,6 +1,8 @@
 #include "MySocket.h"
 
 using namespace MySocket;
+using namespace std;
+
 Socket::Socket(int port) {
 
 	//memset(buffer_in, 0, sizeof(buffer_in)); // buff의 모든 영역을 0으로 초기화
@@ -63,6 +65,7 @@ char* Socket::recv_data() {
 void Socket::print_data() {
 	char* data = recv_data();
 	cout << data << endl;
+	cout << "user : ";
 }
 
 ServerSocket::ServerSocket(int port) : Socket(port) {

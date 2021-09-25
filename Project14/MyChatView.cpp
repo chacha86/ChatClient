@@ -1,20 +1,24 @@
 #include "MyChat.h"
 #include <iostream>
 #include <conio.h>
-#include <windows.h>
-
+#define MSG_PRINT_POS_X 2
+#define MSG_PRINT_POS_Y 3
+#define CHAT_INPUT_POS_X 0
+#define CHAT_INPUT_POS_Y 16
+#define ENTER 13
+#define BACKSPACE 8
 using namespace MyChat;
 using namespace std;
 
 ChatView::ChatView() {
 	//this->chatDataList = vector<ChatData*>();
 	memset(this->msgBuffer, 0, sizeof(msgBuffer));
-	this->index = 0; 
-	this->x = 0;
-	this->y = 16;
-	this->flag = 0;
-	setDataX = 2;
-	setDataY = 3;
+	this->msgBufferIndex = 0; 
+	this->recvFlag = 0;
+	chatInputPos.X = CHAT_INPUT_POS_X;
+	chatInputPos.Y = CHAT_INPUT_POS_Y;
+	msgPrintPos.X = MSG_PRINT_POS_X;
+	msgPrintPos.Y = MSG_PRINT_POS_Y;
 }
 
 void ChatView::printChatWindow() {
@@ -36,81 +40,84 @@ void ChatView::printChatWindow() {
 	cout << "#############################################################" << endl;
 }
 
-void ChatView::gotoxy(int x, int y) {
-	//x, y 좌표 설정
-	COORD pos = { x,y };
-	//커서 이동
+void ChatView::gotoxy(COORD pos) {
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
 }
 
 void ChatView::setChatDataList() {
-	int ty = 0;
+	int rowCount = 0;
 	for (string msg : msgList) {
-		gotoxy(setDataX, setDataY + ty);
+		msgPrintPos.Y += rowCount;
+		gotoxy(msgPrintPos);
 		cout << msg;
-		ty++;
+		rowCount++;
+		msgPrintPos.Y = MSG_PRINT_POS_Y;
 	}
-	gotoxy(x, y);
+	gotoxy(chatInputPos);
 }
 
-void ChatView::setFlag(int flag) {
-	this->flag = flag;
+void ChatView::setRecvFlag(int recvFlag) {
+	this->recvFlag = recvFlag;
 }
 
-void ChatView::printSendMsg() {
+void ChatView::paintChatDisplay() {
+	system("cls");
+	printChatWindow();
+	setChatDataList();
+}
+
+void ChatView::repaintWhenRecvFromServer() {
+	// 채팅 메시지 저장
+	msgList.push_back("서버에서 메시지가 옴..");
+
+	// 채팅창 다시 그리기
+	paintChatDisplay();
+
+	// 입력중이던 채팅 메시지를 다시 그려줌
+	for (int i = 0; i < msgBufferIndex; i++) {
+		cout << msgBuffer[i];
+	}
+
+	// 입력 커서를 index 위치로 바꿈
+	chatInputPos.X = msgBufferIndex;
+	gotoxy(chatInputPos);
+
+	// 평상시 상태로 바꿈
+	recvFlag = 0;
+}
+
+void ChatView::sendToServer() {
+	// 내 메시지를 msgList에 넣는다.
+	msgList.push_back(msgBuffer);
+	// 메시지를 보냈으므로 채팅창 다시 그리고
+	memset(msgBuffer, 0, sizeof(msgBuffer)); // msgBuffer의 내용 비운다.
+
+	paintChatDisplay();
+
+	// 메시지를 보냈으므로 메시지 버퍼 index초기화, 커서의 x값 초기화
+	msgBufferIndex = 0;
+	chatInputPos.X = 0;
+
+	// 입력 커서를 가장 앞으로 돌린다.
+	gotoxy(chatInputPos);
+}
+
+void ChatView::run() {
 	while (true) {
-		if (flag == 1) { // 서버에서 메시지가 왔을 때,
-			// 채팅 메시지 저장
-			msgList.push_back("서버에서 메시지가 옴..");
-
-			// 채팅창 다시 그리기
-			system("cls");
-			printChatWindow();
-			setChatDataList();
-
-			// 입력중이던 채팅 메시지를 다시 그려줌
-			for (int i = 0; i < index; i++) {
-				cout << msgBuffer[i];
-			}
-
-			// 입력 커서를 index 위치로 바꿈
-			gotoxy(index, y);
-
-			// 평상시 상태로 바꿈
-			flag = 0;
+		if (recvFlag == 1) { // 서버에서 메시지가 왔을 때,
+			repaintWhenRecvFromServer();
 		}
 		if (kbhit()) { // 키보드가 입력됐을 때
-			char c = getch(); // 키값을 가져오고
+			char key = getch(); // 키값을 가져오고
 
-			if (c == 13) { // 엔터라면
+			if (key == ENTER) { // 엔터라면
+				sendToServer();
+			} else if (key == BACKSPACE) {
 
-				// 내 메시지를 msgList에 넣는다.
-				msgList.push_back(msgBuffer);
-				// 메시지를 보냈으므로 채팅창 다시 그리고
-				memset(msgBuffer, 0, sizeof(msgBuffer)); // msgBuffer의 내용 비운다.
-
-				system("cls");
-				printChatWindow();
-				setChatDataList();
-
-				// 메시지를 보냈으므로 메시지 버퍼 index초기화, 커서의 x값 초기화
-				index = 0;
-				x = 0;
-
-				// 입력 커서를 가장 앞으로 돌린다.
-				gotoxy(x, y);
-
-
+			} else {
+				msgBuffer[msgBufferIndex++] = key;
+				cout << key;
 			}
-			else if (c == 8)
-			{
-				// todo. 백스페이스 입력시 입력버퍼 한개씩 줄이기 구현			
-			}
-			else {
-				msgBuffer[index++] = c;
-			}
-
-			cout << c;
 		}
 	}
 }

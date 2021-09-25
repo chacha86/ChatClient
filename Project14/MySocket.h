@@ -5,10 +5,8 @@
 #include <thread>
 #include <vector>
 #define MAX_BUFF_SIZE 100
-
-using namespace std;
-
 namespace MySocket {
+
 	typedef struct SocketData {
 		SOCKET target_sock; // 辑滚 家南
 		sockaddr_in target_addr; // 辑滚 林家(IP)
